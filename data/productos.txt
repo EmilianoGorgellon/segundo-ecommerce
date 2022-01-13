@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "timestamp": "December 20th 2021, 5:46:33 pm",
+    "nombre": "naruto",
+    "descripcion": "descripcion de naruto",
+    "codigo": 109,
+    "foto": "https://cdn2.iconfinder.com/data/icons/dragonball-z-glyph/48/Cartoons__Anime_Dragonball_Artboard_2-128.png",
+    "precio": 950,
+    "stock": 5
+  },
+  {
+    "id": 2,
+    "timestamp": "fecha",
+    "nombre": "nombre",
+    "descripcion": "descripcion de algo",
+    "codigo": 123,
+    "foto": "url",
+    "precio": 1200,
+    "stock": 5
+  },
+  {
+    "id": 3,
+    "timestamp": "fecha",
+    "nombre": "nombre",
+    "descripcion": "descripcion de algo",
+    "codigo": 312,
+    "foto": "url",
+    "precio": 3120,
+    "stock": 0
+  },
+  {
+    "id": 4,
+    "timestamp": "fecha",
+    "nombre": "nombre",
+    "descripcion": "descripcion de algo",
+    "codigo": 125,
+    "foto": "url",
+    "precio": 1260,
+    "stock": 1
+  },
+  {
+    "id": 6,
+    "timestamp": "December 20th 2021, 5:30:04 pm",
+    "nombre": "Emiliano",
+    "descripcion": "descripcion de algo",
+    "codigo": 105,
+    "foto": "https://cdn3.iconfinder.com/data/icons/brands-applications/512/naruto-128.png",
+    "precio": 850,
+    "stock": 3
+  }
+]
