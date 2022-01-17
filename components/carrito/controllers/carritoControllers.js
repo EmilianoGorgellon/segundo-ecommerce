@@ -2,10 +2,7 @@ let moment = require("moment");
 // config
 const { config } = require("../../../config");
 // mongo db
-let {Schema, model} = require("mongoose");
-let {carritosSchema} = require("../../../models/schema/carrito.schema");
-let carritoSchema = new Schema(carritosSchema);
-let carritoModel = new model("carrito", carritoSchema);
+let {carritoModel} = require("../../../models/model/carrito.model");
 let {connection} = require("../../../config/mongodb");
 // sqlite3
 let dbSqlite = require("../../../config/sqlite3");
@@ -20,7 +17,6 @@ if (config.db_name === "mongo") {
 } else if (config.db_name === "firebase") {
     carrito = new Carrito(null, firebaseDB, "carrito", config.db_name);
 } else {
-    console.log("ES UN FILE SYSTEM")
     carrito = new Carrito("./data/carrito.txt", null, null, null);
 }
 
@@ -37,7 +33,7 @@ const getCarritoProducts = async (req, res) => {
 }
 
 const addProductCarrito = async (req, res) => {
-    res.json(await carrito.addProductCarrito(req.params, req.body));
+    res.json(await carrito.addProductCarrito(req.params));
 }
 
 const deleteCarritoProductByIds = async (req, res) => {

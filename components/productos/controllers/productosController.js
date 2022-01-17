@@ -5,10 +5,7 @@ let Products = require("../services/productosService");
 let products;
 if (config.db_name === "mongo") {
     // Conexión mongodb
-    let {Schema, model} = require("mongoose");
-    let {productosSchema} = require("../../../models/schema/productos.schema");
-    let productoSchema = new Schema(productosSchema);
-    let productoModel = new model("productos", productoSchema);
+    let {productoModel} = require("../../../models/model/producto.model");
     let {connection} = require("../../../config/mongodb");
     products = new Products(null, productoModel, null, config.db_name);
 } else if (config.db_name === "sqlite3") {
@@ -23,7 +20,6 @@ if (config.db_name === "mongo") {
     products = new Products(null, firebaseDB, "productos", config.db_name);
 } else {
     // Conexión fs
-    console.log("ES UN FILE SYSTEM")
     products = new Products("./data/productos.txt", null, null, null);
 }
 const getProducts = async (req, res) => {

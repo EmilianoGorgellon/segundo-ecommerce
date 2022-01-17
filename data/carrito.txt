@@ -76,5 +76,10 @@
         "stock": 5
       }
     ]
+  },
+  {
+    "id": 4,
+    "timestamp": "January 15th 2022, 2:30:17 am",
+    "productos": []
   }
 ]

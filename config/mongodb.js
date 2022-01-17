@@ -1,7 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const {config} = require("./index");
-console.log(config)
 if (config.db_name === "mongo") {
     let connection;
     (async () => {

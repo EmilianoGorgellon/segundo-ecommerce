@@ -9,7 +9,6 @@ class Products {
 
     async getAll() {
         try {
-            console.log("ENTRE AVER EL GET ALL")
             if (this.db_name === "mongo") {
                 return await this.db_client.find({});
             } else if (this.db_name === "sqlite3") {
@@ -30,12 +29,13 @@ class Products {
     async getProductById(id) {
         try {
             let getAllProducts = await this.getAll();
-            if (id.id !== undefined) {
-                if(parseInt(id.id) > getAllProducts.length || parseInt(id.id) <= 0){
+            id = parseInt(id.id);
+            if (id !== undefined && !Number.isNaN(id)) {
+                if(id <= 0){
                     return { "error": `No hay producto con id: ${id.id}`}
                 }
-                let getProduct = getAllProducts.filter(data => data.id === parseInt(id.id));
-                return getProduct;
+                let getProduct = getAllProducts.filter(data => data.id === id);
+                return getProduct.length !== 0 ? getProduct : `Error no hay productos con id: ${id}`;
             } 
             return getAllProducts;
         } catch (error) {
@@ -47,7 +47,8 @@ class Products {
     async sendProduct(data) {
         try {
             if (this.db_name === "sqlite3") {
-                return await this.db_client.from(`${this.db_collection}`).insert(data);
+                await this.db_client.from(`${this.db_collection}`).insert(data);
+                return {"response" : `Producto agregado`}
             }
             let getAllProducts = await this.getAll();
             let newId = await this.newId(getAllProducts);
@@ -76,8 +77,9 @@ class Products {
                 return 2;
             }
             let idMax = data.reduce((prev, current) => {
-                if (prev.id > current.id){
-                    return prev.id;
+                let valorId = isNaN(prev) ? prev.id : prev 
+                if (valorId > current.id){
+                    return valorId;
                 } else {
                     return current.id;
                 }
@@ -90,22 +92,32 @@ class Products {
     
     async updateProduct(id, updateData){
         try {
-            let getAllProducts = await this.getAll();
             id = parseInt(id.id)
-            if (id <= getAllProducts.length && id > 0){
+            if (id >= 1){
                 if (this.db_name === "sqlite3") {
-                    return await this.db_client.from(`${this.db_collection}`).where({id: id}).update({...updateData});
+                    await this.db_client.from(`${this.db_collection}`).where({id: id}).update({...updateData});
+                    return {"response": `Producto actualizado con id: ${id}`}
                 }
                 let newProduct = {
                     "id": id,
                     ...updateData
                 }
                 if (this.db_name === "mongo") {
-                    return await this.db_client.updateOne({id:id}, {...updateData})
+                    await this.db_client.updateOne({id:id}, {...updateData})
+                    return {"response" : `Producto actualizado con id: ${id}`}
                 } else if (this.db_name === "firebase") {
-                    await this.db_client.collection(`${this.db_collection}`).doc(id).update({...updateData});
-                    return "Todaiva no lo se hacer"
+                    let getProductos = await this.db_client.collection(`${this.db_collection}`).get();
+                    let productoActualizado = false;
+                    getProductos.forEach(async element => {
+                        if (element.data().id === id) {
+                            productoActualizado = true;
+                            await this.db_client.collection(`${this.db_collection}`).doc(element.id).update({id:id, ...updateData});
+                            return;
+                        }
+                    })
+                    return productoActualizado ? {"response" : `Producto actualizado en id: ${id}`} : {"response" : `No existe producto ${id}`}
                 }
+                let getAllProducts = await this.getAll();
                 getAllProducts.splice(id - 1, 1, newProduct);
                 await fs.promises.writeFile(`${this.url}`, JSON.stringify(getAllProducts, null, 2))
                 return newProduct;
@@ -120,22 +132,21 @@ class Products {
         try {
             id = parseInt(id.id);
             if (this.db_name === "mongo") {
-                return await this.db_client.deleteOne({id: id});
+                await this.db_client.deleteOne({id: id});
+                return {"response": `Producto eliminado con id: ${id}`}
             } else if (this.db_name === "sqlite3") {
-                return await this.db_client.from(`${this.db_collection}`).where({id: id}).del();
+                await this.db_client.from(`${this.db_collection}`).where({id: id}).del();
+                return {"response" : `Producto eliminado con id: ${id}`}
             } else if (this.db_name === "firebase") {
-                // let getProductos = await this.db_client.collection(`${this.db_collection}`).get();
-                // let firebase = [];
-                // getProductos.forEach(element => firebase.push({id:element.id, ...element.data()}))
-                // firebase.forEach(async element => {
-                //     if (element.id === id){
-                //         console.log(element)
-                //         await this.db_client.collection(`${this.db_collection}`).doc(element.id).delete()
-                //     }
-                // })
-
-                let a = await this.db_client.collection(`${this.db_collection}`).doc(id).delete();
-                return "deleteProduct";
+                let getProductos = await this.db_client.collection(`${this.db_collection}`).get();
+                let productoEliminado = false;
+                getProductos.forEach(async element => {
+                    if (element.data().id === id) {
+                        productoEliminado = true;
+                        return await this.db_client.collection(`${this.db_collection}`).doc(element.id).delete();
+                    }
+                })
+                return productoEliminado ? {"response": `Producto eliminado con id: ${id}`} : {"response": `No hay producto con id: ${id}`}                
             }
             let getAllProducts = await this.getAll();
             let newAllProducts = getAllProducts.filter(data => data.id !== id);

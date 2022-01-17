@@ -1,6 +1,5 @@
 require("dotenv").config();
 const name = require("../helper/switchDB");
-console.log(name.db_name)
 const config = {
     port: process.env.PORT,
     cors: `${process.env.CORS}`,

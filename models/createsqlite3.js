@@ -18,6 +18,19 @@ const startSqlite3 = async () => {
         } else {
             console.log("Ya existe la tabla productos")
         }
+        
+        hastable = await dbSqlite.client.schema.hasTable('carrito');
+        if(!hastable){
+            await dbSqlite.client.schema.createTable('carrito', table => {
+                table.increments("id").primary(),
+                table.string("timestamp"),
+                table.string("array")
+              
+            });
+        } else {
+            console.log("Ya existe la tabla carrito")
+        }
+
     } catch (error) {
         console.log("Error: " + error);
     }
