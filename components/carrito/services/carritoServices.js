@@ -8,9 +8,7 @@ class Carrito {
     }
     async getAll(){
         try {
-            console.log("ENTRE AVER EL GET ALL")
             if (this.db_name === "mongo") {
-                console.log("ESTOY EN MONGODB")
                 return await this.db_client.find({});
             } else if (this.db_name === "sqlite3") {
                 return await this.db_client.from(`${this.db_collection}`);
@@ -36,18 +34,15 @@ class Carrito {
                 "timestamp": time,
                 "productos": []
             }
-            console.log(newCarrito)
             if (this.db_name === "mongo") {
                 await this.db_client.create(newCarrito);
                 return {"response": `id: ${newId}`}
             } else if (this.db_name === "sqlite3") {
-                console.log("cre carro en sqlñite3 ydeuvlevo su id")
+                console.log("carrito con sqlite3")
             } else if (this.db_name === "firebase") { 
                 return await this.db_client.collection(`${this.db_collection}`).doc().set(newCarrito);
-            }
-          
+            }     
             getAllCarrito.push(newCarrito);
-            console.log(getAllCarrito)
             await fs.promises.writeFile(`${this.url}`, JSON.stringify(getAllCarrito, null, 2));
             return newId;
         } catch (error) {
@@ -62,7 +57,7 @@ class Carrito {
                 if (this.db_name === "mongo") {
                     return await this.db_client.deleteOne({id: id});
                 } else if (this.db_name === "sqlite3") {
-                    console.log("xd")
+                    console.log("elimino carrito segun id con sqlite3")
                 } else if (this.db_name === "firebase") {
                     let getProductos = await this.db_client.collection(`${this.db_collection}`).get();
                     let productoEliminado = false;
